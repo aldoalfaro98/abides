@@ -15,7 +15,7 @@ from util.util import get_value_from_timestamp
 
 
 MID_PRICE_CUTOFF = 10000  # Price above which mid price is set as `NaN` and subsequently forgotten. WARNING: This
-                         # effectively hides dropout of liquidity on ask side. Set to sys.max_size to reset.
+                          # effectively hides dropout of liquidity on ask side. Set to sys.max_size to reset.
 LIQUIDITY_DROPOUT_WARNING_MSG = "No liquidity on one side of the order book during this experimental trace."
 
 
@@ -94,7 +94,7 @@ def augment_with_VWAP(merged):
     merged['VWAP'] = merged['VWAP']
     merged = merged.set_index('index')
     merged = merged.drop(columns=['level_0'])
-    del merged.index.name
+    merged.rename_axis(None, axis=1, inplace=True)
 
     return merged
 
