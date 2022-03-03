@@ -5,7 +5,7 @@
 # - 25 Momentum Agents
 # - 5000 Noise Agents
 # - 100 HBL Agents
-# - 1 Simple Spoofing Agent
+# - 10 Simple Spoofing Agent
 
 import argparse
 import numpy as np
@@ -30,7 +30,7 @@ from agent.ZeroIntelligenceAgent import ZeroIntelligenceAgent
 from agent.HeuristicBeliefLearningAgent import HeuristicBeliefLearningAgent
 
 # MARKET MANIPULATOR AGENT
-# from agent.market_manipulators.SimpleSpoofingAgent import SimpleSpoofingAgent
+from agent.market_manipulators.SimpleSpoofingAgent import SimpleSpoofingAgent
 
 ########################################################################################################################
 ############################################### GENERAL CONFIG #########################################################
@@ -280,22 +280,20 @@ agent_types.extend("HeuristicBeliefLearningAgent")
 
 # MARKET MANIPULATOR AGENT -----------------------------------------------------
 
-# num_market_manipulators = 1
-# agents.extend([
-#     SimpleSpoofingAgent(
-#         id = i,
-#         name = "SIMPLE_SPOOFING_AGENT_{}".format(i),
-#         type = "SimpleSpoofingAgent",
-#         symbol = symbol,
-#         starting_cash = starting_cash,
-#         log_orders = log_orders,
-#         random_state = np.random.RandomState(
-#             seed = np.random.randint(low=0, high=2 ** 32, dtype='uint64')
-#         )
-#     ) for i in range(agent_count, agent_count + num_market_manipulators)
-# ])
-# agent_count += num_market_manipulators
-# agent_types.extend("SimpleSpoofingAgent")
+num_market_manipulators = 1
+agents.extend([
+    SimpleSpoofingAgent(
+        id=j,
+        name="Spoofing Agent {}".format(j),
+        type="SpoofingAgent",
+        symbol=symbol,
+        starting_cash=starting_cash,
+        random_state=np.random.RandomState(seed=np.random.randint(low=0, high=2 ** 32, dtype='uint64'))
+    )
+        for j in range(agent_count, agent_count + num_market_manipulators)
+])
+agent_count += num_market_manipulators
+agent_types.extend("SimpleSpoofingAgent")
 
 ########################################################################################################################
 ########################################### KERNEL AND OTHER CONFIG ####################################################
