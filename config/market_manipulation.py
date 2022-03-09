@@ -104,7 +104,7 @@ book_freq = 0
 
 print("FINTECH D1: MARKET MANIPULATION EXPERIMENT\n")
 
-simulation_start_time = dt.datetime.now()
+simulation_start_time = dt.datetime(2020, 1, 1, 9, 30, 0)
 print("Simulation Start Time: {}".format(simulation_start_time))
 print("Configuration seed: {}\n".format(seed))
 ########################################################################################################################
