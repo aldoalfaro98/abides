@@ -18,6 +18,7 @@ from Kernel import Kernel
 from util import util
 from util.order import LimitOrder
 from util.oracle.SparseMeanRevertingOracle import SparseMeanRevertingOracle
+from util.oracle.ExternalFileOracle import ExternalFileOracle
 from model.LatencyModel import LatencyModel
 
 # AGENTS
@@ -49,6 +50,10 @@ parser.add_argument('-d', '--historical-date',
                     required=True,
                     type=parse,
                     help='historical date being simulated in format YYYYMMDD.')
+parser.add_argument('-f',
+                    '--fundamental-file-path',
+                    required=False,
+                    help="Path to external fundamental file.")
 parser.add_argument('--start-time',
                     default='09:30:00',
                     type=parse,
@@ -118,23 +123,30 @@ agent_count, agents, agent_types = 0, [], []
 
 # Hyperparameters
 symbol = args.ticker
-starting_cash = 10000000  # Cash in this simulator is always in CENTS.
+starting_cash = 1000000  # Cash in this simulator is always in CENTS.
 
 r_bar = 1e5
 sigma_n = r_bar / 10
 kappa = 1.67e-15
 lambda_a = 7e-11
 
-symbols = {symbol: {'r_bar': r_bar,
-                    'kappa': 1.67e-16,
-                    'sigma_s': 0,
-                    'fund_vol': args.fund_vol,
-                    'megashock_lambda_a': 2.77778e-18,
-                    'megashock_mean': 1e3,
-                    'megashock_var': 5e4,
-                    'random_state': np.random.RandomState(seed=np.random.randint(low=0, high=2 ** 32, dtype='uint64'))}}
+# (2) External File Oracle
+symbols = {
+    symbol: {
+        'fundamental_file_path': args.fundamental_file_path,
+        'random_state': np.random.RandomState(seed=np.random.randint(low=0, high=2 ** 32)),
+        'r_bar': r_bar,
+        'kappa': 1.67e-16,
+        'sigma_s': 0,
+        'fund_vol': 1e-8,   # volatility of fundamental time series.
+        'megashock_lambda_a': 2.77778e-18,
+        'megashock_mean': 1e3,
+        'megashock_var': 5e4,
+        'random_state': np.random.RandomState(seed=np.random.randint(low=0, high=2 ** 32))}
+    }
 
-oracle = SparseMeanRevertingOracle(mkt_open, mkt_close, symbols)
+oracle = ExternalFileOracle(symbols)
+r_bar = oracle.fundamentals[symbol].values[0]
 
 # EXCHANGE AGENT ---------------------------------------------------------------
 
